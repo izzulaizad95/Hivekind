@@ -1,0 +1,249 @@
+@import 'analytics.css'; /* Using a string */
+
+// Place all the styles related to the Homepage controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+.home-page-container {
+  margin: auto;
+  width: 100%;
+
+  // .home-page-top-section {
+  // }
+
+  .home-page-middle-section {
+    background: #8cc3ff;
+    height: fit-content;
+    margin-top: 0px;
+    padding-bottom: 20px;
+    @media screen and (min-width: 575px) {
+      margin-top: 50px;
+    }
+
+    p {
+      padding-top: 20px;
+    }
+
+    .image-container {
+      padding: 10px 20px;
+      @media screen and (min-width: 575px) {
+        padding: 10px 130px;
+      }
+    }
+
+    img {
+      margin: 12px;
+    }
+  }
+
+  .home-page-most-section {
+    padding: 0px 20px 20px;
+    @media screen and (min-width: 575px) {
+      padding: 0px 20px 20px 8%;
+    }
+    &.vanity-section {
+      padding: 0px 40px;
+    }
+
+    .sub-section {
+      padding: 1.5em 2em 0;
+      box-shadow: 10px 10px 50px #eee;
+      &.vanity-section {
+        box-shadow: none;
+        padding: 0;
+      }
+
+      h4 {
+        margin-bottom: 1em;
+      }
+    }
+
+    ul {
+      padding: 0;
+    }
+
+    li {
+      list-style-type: none;
+      padding: 1em;
+      border-bottom: 1px solid #eee;
+      overflow-wrap: anywhere;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    li:hover {
+      background-color: #ddd;
+    }
+  }
+
+  .home-page-bottom-section {
+    padding: 40px 10px 0px;
+    @media screen and (min-width: 575px) {
+      padding: 40px 10px;
+    }
+
+    .sub-section {
+      padding: 0px 80px;
+      text-align: center;
+      @media screen and (min-width: 575px) {
+        padding: 46px;
+      }
+    }
+  }
+
+  .right-div {
+    background-image: url('undraw_share_link.svg');
+    background-repeat: no-repeat;
+    height: 340px;
+    margin-top: 40px;
+    z-index: -1;
+  }
+
+  .link-logo {
+    background-image: url('linkShorten.svg');
+    background-position: 23% 81%;
+  }
+
+  .track-logo {
+    background-image: url('graph.svg');
+    background-position: 53% 60%;
+  }
+  .trash-logo {
+    background-image: url('trash.svg');
+    // background-position: 53% 60%;
+  }
+  .edit-logo {
+    background-image: url('pencil-square.svg');
+    // background-position: 53% 60%;
+  }
+
+  .people-logo {
+    background-image: url('Group.svg');
+    background-position: center;
+  }
+
+  .logo {
+    background-repeat: no-repeat;
+    background-color: #ccd2e0;
+    width: 70px;
+    height: 70px;
+    border-radius: 36px;
+  }
+
+  .sub-section {
+    p {
+      color: #909ab0;
+      margin-bottom: 3em;
+      @media screen and (min-width: 575px) {
+        margin-bottom: 0em;
+      }
+    }
+
+    h3 {
+      text-align: center;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 32px;
+      line-height: 37px;
+      padding: 15px 0px;
+    }
+  }
+
+  .shorten,
+  .track,
+  .learn {
+    // padding: 0px 35px;
+    place-content: center;
+    text-align: -webkit-center;
+    text-align-last: center;
+    // @media screen and (min-width: 575px) {
+    //   padding: 0px 120px 30px 35px;
+    // }
+  }
+
+  button {
+    padding: 5px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    background-color: #0760c4;
+    color: #fff;
+    border: none;
+  }
+
+  input {
+    padding: 5px 10px;
+    border: 1px solid #adaeae;
+    box-sizing: border-box;
+  }
+
+  .left-div {
+    .left-container {
+      padding: 8%;
+      @media screen and (min-width: 575px) {
+        padding: 8% 0 0 18%;
+      }
+    }
+
+    .url-holder {
+      justify-content: center;
+      font-size: 14px;
+      line-height: 16px;
+      --bs-gutter-x: 0rem;
+      width: 100%;
+      @media screen and (min-width: 575px) {
+        width: 130%;
+        justify-content: left;
+      }
+
+      input[type='text'] {
+        margin-right: 7px;
+        margin-bottom: 30px;
+        padding: 15px 19px;
+        @media screen and (min-width: 575px) {
+          margin-bottom: 7px;
+        }
+      }
+
+      button {
+        margin-bottom: 7px;
+        padding: 15px 19px;
+        width: fit-content;
+      }
+
+      span {
+        text-align: center;
+        padding: 12px 0px;
+        @media screen and (min-width: 575px) {
+          text-align: left;
+        }
+      }
+    }
+
+    h1 {
+      margin: 0 1.5rem 1.5rem;
+      text-align: center;
+      font-size: 48px;
+      @media screen and (min-width: 575px) {
+        margin: 0.5rem 0;
+        text-align: left;
+      }
+    }
+
+    p {
+      margin: 1.5rem;
+      text-align: center;
+      color: #909ab0;
+      margin-bottom: 30px;
+      @media screen and (min-width: 575px) {
+        margin: 0.5rem 0;
+        text-align: left;
+        width: 330px;
+        margin-bottom: 60px;
+      }
+    }
+  }
+}

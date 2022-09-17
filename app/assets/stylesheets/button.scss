@@ -1,0 +1,48 @@
+#topButton {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 65px; /* Place the button at the bottom of the page */
+  right: 30px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  height: 30px;
+  width: 30px;
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: #8cc3ff; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  border-radius: 30px; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+  font-family: cursive; /* Increase font family */
+  font-weight: 600; /* Increase font weight */
+  padding-bottom: 4px; /* Center the arrow */
+  transform: rotate(-180deg);
+}
+
+#bottomButton {
+  display: none; /* Hidden by default */
+  position: fixed; /* Fixed/sticky position */
+  bottom: 30px; /* Place the button at the bottom of the page */
+  right: 30px; /* Place the button 30px from the right */
+  z-index: 99; /* Make sure it does not overlap */
+  height: 30px;
+  width: 30px;
+  border: none; /* Remove borders */
+  outline: none; /* Remove outline */
+  background-color: #8cc3ff; /* Set a background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Add a mouse pointer on hover */
+  border-radius: 30px; /* Rounded corners */
+  font-size: 18px; /* Increase font size */
+  font-family: cursive; /* Increase font family */
+  font-weight: 600; /* Increase font weight */
+  padding-bottom: 4px; /* Center the arrow */
+}
+
+#topButton:hover {
+  background-color: #0760c4; /* Add a dark-grey background on hover */
+}
+
+#bottomButton:hover {
+  background-color: #0760c4; /* Add a dark-grey background on hover */
+}

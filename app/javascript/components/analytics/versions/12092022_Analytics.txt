@@ -1,0 +1,267 @@
+/* eslint-disable react/jsx-no-target-blank */
+import { createConsumer } from '@rails/actioncable'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import * as timeago from 'timeago.js'
+import lineChartPlaceholder from '../../../assets/images/line_chart_placeholder'
+import worldMapPlaceholder from '../../../assets/images/world_map_placeholder'
+import LayoutContext from '../../packs/context/LayoutContext'
+import { formatDate } from '../util/formatDate'
+import api from '../util/linkhiveApi'
+
+const consumer = createConsumer()
+// const TOTAL_PAGES = 99999
+const LIMIT = 25
+
+const Analytics = () => {
+  const { isMobile } = useContext(LayoutContext)
+
+  const [urlData, setUrlData] = useState({})
+  const [urlStats, setUrlStats] = useState([])
+  const [urlVisitCount, setUrlVisitCount] = useState(0)
+  // const [scrollPosition, setScrollPosition] = useState(0)
+
+  const slug = window.location.pathname.substring(3)
+
+  /* -------------- INFINITE SCROLL ------------- */
+  const [loading, setLoading] = useState(true)
+  // const [allUsers, setAllUsers] = useState([]);
+  // const [pageNum, setPageNum] = useState(1)
+  const [pageNum, setPageNum] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [lastElement, setLastElement] = useState(null)
+
+  const observer = useRef(
+    new IntersectionObserver(entries => {
+      const first = entries[0]
+      if (first.isIntersecting) {
+        setPageNum(no => no + 1)
+      }
+    })
+  )
+
+  const callUrl = async () => {
+    setLoading(true)
+    api.getInfScrollUrlData(slug, LIMIT, pageNum).then(r => {
+      // let all = new Set([...urlStats, ...r.data.data.url.inf_statistics])
+      // setUrlStats([...all])
+      setUrlStats([...r.data.data.url.inf_statistics]) // too fast
+      setLoading(false)
+      // updateStorage()
+    })
+  }
+
+  console.log(pageNum, urlStats.length)
+
+  useEffect(() => {
+    if (pageNum <= totalPages) {
+      callUrl()
+    }
+  }, [pageNum])
+
+  // const updateStorage = () => {
+  //   const prvInfo = JSON.parse(sessionStorage.getItem('slug_prev_sect'))
+  //   const updateInfo = {
+  //     ...prvInfo,
+  //     [`${slug}`]: window.pageYOffset,
+  //   }
+  //   sessionStorage.setItem('slug_prev_sect', JSON.stringify(updateInfo))
+  // }
+
+  useEffect(() => {
+    const currentElement = lastElement
+    const currentObserver = observer.current
+
+    if (currentElement) {
+      currentObserver.observe(currentElement)
+    }
+
+    return () => {
+      if (currentElement) {
+        currentObserver.unobserve(currentElement)
+      }
+    }
+  }, [lastElement])
+
+  /* --------------- INITIATE PAGE -------------- */
+  useEffect(() => {
+    // const slug = window.location.pathname.substring(3)
+    // const slugPrevSect = JSON.parse(sessionStorage.getItem('slug_prev_sect'))[
+    //   `${slug}`
+    // ]
+
+    // const setData = r => {
+    //   setUrlData(r.data.data.url)
+    //   setUrlStats(r.data.data.url.inf_statistics)
+    //   setUrlVisitCount(r.data.data.url.visit_count)
+    //   setTotalPages(r.data.data.url.statistics.length / LIMIT + 1)
+    // }
+
+    api.getInfScrollUrlData(slug, LIMIT, pageNum).then(r => {
+      setUrlData(r.data.data.url)
+      setUrlStats(r.data.data.url.inf_statistics)
+      setUrlVisitCount(r.data.data.url.visit_count)
+      setTotalPages(r.data.data.url.statistics.length / LIMIT + 1)
+      // setData(r)
+      // window.scroll({ top: slugPrevSect, behavior: 'smooth' })
+    })
+    // if (!slugPrevSect.page_num) {
+    // } else {
+    //   api.getInfScrollUrlData(slug, LIMIT, slugPrevSect.page_num).then(r => {
+    //     setData(r)
+    //     setPageNum(slugPrevSect.page_num)
+    //   })
+    // }
+
+    consumer.subscriptions.create(
+      { channel: 'UrlVisitChannel', room: `url_visit:${slug}` },
+      {
+        received(data) {
+          const stats = JSON.parse(data)
+          setUrlStats(_urlStats => [stats, ..._urlStats])
+          setUrlVisitCount(stats.count)
+        },
+      }
+    )
+  }, [])
+
+  /* -------------------------------------------- */
+  /*                    CHARTS                    */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /*                    GEOMAP                    */
+  /* -------------------------------------------- */
+
+  const TableRow = ({ data }) => {
+    return (
+      <tr key={data.id}>
+        <td className="col-lg-4 col-md-4 col-sm-4 col-9">{data.referrer}</td>
+        <td
+          className="col-lg-4 col-md-4 col-sm-4 col-3"
+          style={{ textAlign: isMobile ? 'right' : 'center' }}
+        >
+          {data.user_agent?.match(/^[a-zA-Z]+/g).join()}
+        </td>
+        {!isMobile && (
+          <>
+            <td
+              className="col-lg-2 col-md-2 col-sm-2"
+              style={{ textAlign: 'center' }}
+            >
+              {data.country}
+            </td>
+            <td
+              className="col-lg-2 col-md-2 col-sm-2"
+              style={{ textAlign: 'right' }}
+            >
+              {formatDate(new Date(data.created_at))}
+            </td>
+          </>
+        )}
+      </tr>
+    )
+  }
+
+  return (
+    <div className="analytics-container">
+      <div className="analytics-metadata-section white-background padded-container">
+        <p className="bigger-font">
+          Analytics data for&nbsp;
+          <a href={urlData.shortened_link}>{urlData.slug}</a>
+        </p>
+        <p>
+          Created&nbsp;
+          {timeago.format(urlData.created_at)}
+        </p>
+        <p>
+          Destination URL:&nbsp;
+          <a href={urlData.url} target="_blank">
+            {urlData.url}
+          </a>
+        </p>
+      </div>
+
+      <div className="analytics-data-section white-background padded-container row">
+        <div className="col-lg-3 col-md-3 col-sm-3 col-3">
+          <div className="bigger-font">
+            <b>{urlVisitCount}</b>
+            <br />
+          </div>
+          <b>Clicks</b>
+        </div>
+
+        <div className="col-lg-9 col-md-9 col-sm-9 col-9 timeframe">
+          <b className="">Timeframe: &nbsp;</b>
+          <button className="realtime" type="button">
+            Realtime
+          </button>
+        </div>
+      </div>
+
+      <div
+        className="row padded-container white-background"
+        // style={{ placeContent: isMobile ? 'center' : null }}
+      >
+        <img
+          className="col-lg-6 col-md-6 col-sm-6 col-12 image-container"
+          src={lineChartPlaceholder}
+          width="100%"
+          height="100%"
+        />
+        <img
+          className="col-lg-6 col-md-6 col-sm-6 col-12 image-container"
+          src={worldMapPlaceholder}
+          width="100%"
+          height="100%"
+        />
+      </div>
+
+      <div className="analytics-statistics-section white-background padded-container row">
+        <table className="table table-hover analytics-table">
+          <thead>
+            <tr>
+              <th className="col-lg-4 col-md-4 col-sm-4 col-9">Referrer</th>
+              <th
+                className="col-lg-4 col-md-4 col-sm-4 col-3"
+                style={{ textAlign: isMobile ? 'right' : 'center' }}
+              >
+                Browser
+              </th>
+              {!isMobile && (
+                <>
+                  <th
+                    className="col-lg-2 col-md-2 col-sm-2"
+                    style={{ textAlign: 'center' }}
+                  >
+                    Country
+                  </th>
+                  <th
+                    className="col-lg-2 col-md-2 col-sm-2"
+                    style={{ textAlign: 'right' }}
+                  >
+                    Date/Time
+                  </th>
+                </>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {urlStats &&
+              urlStats.map((stat, i) => {
+                return i === urlStats.length - 1 &&
+                  !loading &&
+                  pageNum <= totalPages ? (
+                  <div key={`${stat.referrer}-${i}`} ref={setLastElement}>
+                    <TableRow data={stat} />
+                  </div>
+                ) : (
+                  <TableRow data={stat} key={`${stat.referrer}-${i}`} />
+                )
+              })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+export default Analytics
